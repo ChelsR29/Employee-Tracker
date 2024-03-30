@@ -1,4 +1,6 @@
-// Connect to database
+const fs = require('fs');
+
+// Create a connection to the database
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -59,9 +61,12 @@ function startApp() {
   });
 }
 
+// Read SQL queries from the queries.sql file
+const sqlQueries = fs.readFileSync('queries.sql', 'utf8');
+
 // View all departments
 function viewDepartments() {
-  db.query('SELECT * FROM department', (err, res) => {
+  db.query(sqlQueries.getAllDepartments, (err, res) => {
     if (err) throw err;
     console.table(res);
     startApp();
@@ -70,7 +75,7 @@ function viewDepartments() {
 
 // View all roles
 function viewRoles() {
-  db.query('SELECT * FROM role', (err, res) => {
+  db.query(sqlQueries.getAllRoles, (err, res) => {
     if (err) throw err;
     console.table(res);
     startApp();
@@ -79,7 +84,7 @@ function viewRoles() {
 
 // View all employees
 function viewEmployees() {
-  db.query('SELECT * FROM employee', (err, res) => {
+  db.query(sqlQueries.getAllEmployees, (err, res) => {
     if (err) throw err;
     console.table(res);
     startApp();
@@ -95,7 +100,7 @@ function addDepartment() {
       message: 'Enter department name:'
     }
   ]).then(answer => {
-    db.query('INSERT INTO department SET ?', answer, (err, res) => {
+    db.query(sqlQueries.addDepartment, answer, (err, res) => {
       if (err) throw err;
       console.log('Department added successfully.');
       startApp();
@@ -122,7 +127,7 @@ function addRole() {
       message: 'Enter department ID:'
     }
   ]).then(answer => {
-    db.query('INSERT INTO role SET ?', answer, (err, res) => {
+    db.query(sqlQueries.addRole, answer, (err, res) => {
       if (err) throw err;
       console.log('Role added successfully.');
       startApp();
@@ -154,7 +159,7 @@ function addEmployee() {
       message: 'Enter manager ID (leave blank if none):'
     }
   ]).then(answer => {
-    db.query('INSERT INTO employee SET ?', answer, (err, res) => {
+    db.query(sqlQueries.addEmployee, answer, (err, res) => {
       if (err) throw err;
       console.log('Employee added successfully.');
       startApp();
@@ -176,7 +181,7 @@ function updateEmployeeRole() {
       message: 'Enter new role ID:'
     }
   ]).then(answer => {
-    db.query('UPDATE employee SET role_id = ? WHERE id = ?', [answer.role_id, answer.employee_id], (err, res) => {
+    db.query(sqlQueries.updateEmployeeRole, [answer.role_id, answer.employee_id], (err, res) => {
       if (err) throw err;
       console.log('Employee role updated successfully.');
       startApp();
